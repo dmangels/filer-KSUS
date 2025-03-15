@@ -4,6 +4,7 @@
   <title>Basic Frogger HTML Game</title>
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2"></script>
   <style>
   html, body {
     height: 100%;
@@ -20,8 +21,68 @@
 </head>
 <body>
     <div class="flex flex-col items-center justify-center">
-        <h1 class="text-white text-4xl font-bold">Transfer the files to the servers!</h1>
-        <canvas width="624" height="720" id="game"></canvas>
+        <div class="flex flex-row items-center justify-center">
+            <img src="images/files-logo.png" alt="logo" class="w-20">
+            <h1 class="text-white text-4xl font-bold">Transfer the files to the cloud provider destinations!</h1>
+        </div>
+        <p class="text-white text-sm">Use the arrow keys to move the filer around the screen. Avoid the obstacles and make it to the cloud provider destinations!</p>
+        <div class="flex flex-row items-start justify-center gap-8 mt-8">
+            <canvas width="624" height="720" id="game"></canvas>
+            
+            <!-- Game Legend -->
+            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-64">
+                <h2 class="text-green-400 text-xl font-bold mb-4">Game Legend</h2>
+                
+                <!-- Safe Elements -->
+                <div class="mb-6">
+                    <h3 class="text-green-500 font-bold mb-2">Safe to Use</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <img src="images/cloud.png" alt="Cloud Service" class="w-8 h-8">
+                            <span class="text-gray-300 text-sm">Cloud Services - Your destinations</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img src="images/fiber-cable.png" alt="Fiber Cable" class="w-12 h-4">
+                            <span class="text-gray-300 text-sm">Fiber Cable - Ride these to cross</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img src="images/wifi.png" alt="WiFi" class="w-8 h-8">
+                            <span class="text-gray-300 text-sm">WiFi - Safe to hop on</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img src="images/server.png" alt="Server" class="w-8 h-8">
+                            <span class="text-gray-300 text-sm">Server - Your starting point</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dangerous Elements -->
+                <div>
+                    <h3 class="text-red-500 font-bold mb-2">Avoid These</h3>
+                    <div class="space-y-3">
+                      <div class="flex items-center gap-3">
+                        <img src="images/bad-packet.png" alt="Bad Packet" class="w-8 h-8">
+                        <span class="text-gray-300 text-sm">Bad Packet - Corrupts data</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                          <img src="images/network-issue.png" alt="Network Issue" class="w-8 h-8">
+                          <span class="text-gray-300 text-sm">Network Issue - Causes timeout</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                          <img src="images/hacker.png" alt="Hacker" class="w-8 h-8">
+                          <span class="text-gray-300 text-sm">Hacker - Will steal your data</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                          <img src="images/bad-wifi.png" alt="Bad WiFi" class="w-8 h-8">
+                          <span class="text-gray-300 text-sm">Bad WiFi - Drops connection</span>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed bottom-0 w-full flex flex-col items-center justify-center pb-4">
+        <p class="text-white text-sm">Made with ❤️ by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
     </div>
 <script>
 const canvas = document.getElementById('game');
@@ -41,6 +102,22 @@ const hackerImage = new Image();
 hackerImage.src = 'images/hacker.png';
 const networkIssueImage = new Image();
 networkIssueImage.src = 'images/network-issue.png';
+const badWifiImage = new Image();
+badWifiImage.src = 'images/bad-wifi.png';
+const badPacketImage = new Image();
+badPacketImage.src = 'images/bad-packet.png';
+const boxImage = new Image();
+boxImage.src = 'images/box.png';
+const awsImage = new Image();
+awsImage.src = 'images/aws.png';
+const azureImage = new Image();
+azureImage.src = 'images/azure.png';
+const dropboxImage = new Image();
+dropboxImage.src = 'images/dropbox.png';
+const googleCloudImage = new Image();
+googleCloudImage.src = 'images/google-cloud.png';
+const fiberCableImage = new Image();
+fiberCableImage.src = 'images/fiber-cable.png';
 
 // a simple sprite prototype function
 function Sprite(props) {
@@ -52,7 +129,9 @@ Sprite.prototype.render = function() {
 
   // draw an image sprite
   if (this.image) {
-    context.drawImage(this.image, this.x, this.y, this.size, this.size);
+    // If imageHeight is specified, use it, otherwise use this.size for height
+    const height = this.imageHeight || this.size;
+    context.drawImage(this.image, this.x, this.y, this.size, height);
   }
   // draw a rectangle sprite
   else if (this.shape === 'rect') {
@@ -85,13 +164,15 @@ const patterns = [
   // end bank is safe
   null,
 
-  // log
+  // fiber cable (formerly log)
   {
     spacing: [2],      // how many grid spaces between each obstacle
     color: '#FFFFFF',  // color of the obstacle
-    size: grid * 4,    // width (rect) / diameter (circle) of the obstacle
+    size: grid * 4,    // width of the obstacle
     shape: 'rect',     // shape of the obstacle (rect or circle)
-    speed: 0.75        // how fast the obstacle moves and which direction
+    speed: 0.75,       // how fast the obstacle moves and which direction
+    image: fiberCableImage,
+    imageHeight: grid  // height of the image
   },
 
   // turtle (now wifi)
@@ -104,22 +185,26 @@ const patterns = [
     image: wifiImage
   },
 
-  // long log
+  // long fiber cable (formerly long log)
   {
     spacing: [2],
-    color: '#A18D8C',
+    color: '#FFFFFF',
     size: grid * 7,
     shape: 'rect',
-    speed: 1.5
+    speed: 1.5,
+    image: fiberCableImage,
+    imageHeight: grid
   },
 
-  // log
+  // fiber cable (formerly log)
   {
     spacing: [3],
-    color: '#A18D8C',
+    color: '#FFFFFF',
     size: grid * 3,
     shape: 'rect',
-    speed: 0.5
+    speed: 0.5,
+    image: fiberCableImage,
+    imageHeight: grid
   },
 
   // turtle (now wifi)
@@ -135,16 +220,17 @@ const patterns = [
   // beach is safe
   null,
 
-  // truck
+  // truck (now bad packet)
   {
     spacing: [3,8],
     color: '#A18D8C',
-    size: grid * 2,
+    size: grid * 1,
     shape: 'rect',
-    speed: -1
+    speed: -1,
+    image: badPacketImage
   },
 
-  // fast car
+  // network issue (formerly fast car)
   {
     spacing: [14],
     color: '#FFFFFF',
@@ -167,19 +253,20 @@ const patterns = [
   // bulldozer
   {
     spacing: [3,3,7],
-    color: '#A18D8C',
+    color: '#FF0000',
     size: grid,
     shape: 'rect',
     speed: 0.5
   },
 
-  // car
+  // bad wifi (formerly car)
   {
     spacing: [4],
     color: '#FFFFFF',
     size: grid,
     shape: 'rect',
-    speed: -0.5
+    speed: -0.5,
+    image: badWifiImage
   },
 
   // start zone is safe
@@ -237,24 +324,122 @@ function loop() {
   context.fillStyle = '#020817';
   context.fillRect(0, grid, canvas.width, grid * 6);
 
+  // road
+  context.fillStyle = '#374151';  // A nice dark gray color
+  context.fillRect(0, grid * 8, canvas.width, grid * 5);
+
   // end bank
-  context.fillStyle = '#EE2B38';
+  context.fillStyle = '#059669';  // Matching green from our theme
   context.fillRect(0, grid, canvas.width, 5);
   context.fillRect(0, grid, 5, grid);
   context.fillRect(canvas.width - 5, grid, 5, grid);
-  // Draw servers at destination spots
-  for (let i = 0; i < 4; i++) {
-    context.fillRect(grid + grid * 3 * i, grid, grid * 2, 5);
-    // Draw server image centered in the destination spot
-    context.drawImage(serverImage, grid + grid * 3 * i + (grid * 2 - grid) / 2, grid, grid, grid);
+
+  // Draw cloud provider destinations with branded zones
+  const cloudImages = [awsImage, azureImage, dropboxImage, googleCloudImage, boxImage];
+  const cloudZoneColors = [
+    ['#1F2937', '#374151'], // Dark gray gradient for slots
+    ['#1F2937', '#374151'], // Dark gray gradient for slots
+    ['#1F2937', '#374151'], // Dark gray gradient for slots
+    ['#1F2937', '#374151'], // Dark gray gradient for slots
+    ['#1F2937', '#374151']  // Dark gray gradient for slots
+  ];
+
+  // Draw end zone background first (green)
+  context.fillStyle = '#059669';  // Matching green from our theme
+  context.fillRect(0, grid, canvas.width, grid);
+
+  for (let i = 0; i < 5; i++) {
+    // Create gradient for each zone
+    const zoneGradient = context.createLinearGradient(
+      grid + grid * 3 * i, 
+      grid, 
+      grid + grid * 3 * i + grid * 2, 
+      grid * 2
+    );
+    zoneGradient.addColorStop(0, cloudZoneColors[i][0]);
+    zoneGradient.addColorStop(1, cloudZoneColors[i][1]);
+    
+    // Draw gray zone background
+    context.fillStyle = zoneGradient;
+    context.fillRect(grid + grid * 3 * i, grid, grid * 2, grid);
+    
+    // Add oblique cross-hatch pattern only to gray zones
+    context.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    context.lineWidth = 1;
+    context.save();  // Save the current context state
+    
+    // Create clipping region for the gray zone
+    context.beginPath();
+    context.rect(grid + grid * 3 * i, grid, grid * 2, grid);
+    context.clip();
+    
+    // Diagonal lines (top-left to bottom-right)
+    for (let j = -grid; j < grid * 3; j += 10) {
+      context.beginPath();
+      context.moveTo(grid + grid * 3 * i + j, grid);
+      context.lineTo(grid + grid * 3 * i + j + grid, grid * 2);
+      context.stroke();
+    }
+    
+    // Diagonal lines (top-right to bottom-left)
+    for (let j = -grid; j < grid * 3; j += 10) {
+      context.beginPath();
+      context.moveTo(grid + grid * 3 * i + j, grid);
+      context.lineTo(grid + grid * 3 * i + j - grid, grid * 2);
+      context.stroke();
+    }
+    
+    context.restore();  // Restore the context state to remove clipping
+
+    // Draw cloud provider logo to the right of each zone
+    context.drawImage(
+      cloudImages[i],
+      grid + grid * 3 * i + grid * 2, // Center over the green area between zones
+      grid,                           // At the top of the zone
+      grid,                          // Full grid size
+      grid
+    );
   }
 
-  // beach
-  context.fillStyle = '#C11F32';
+  // Safe zone (formerly beach) - Create a secure network pattern
+  const safeZoneGradient = context.createLinearGradient(0, 7 * grid, canvas.width, 7 * grid + grid);
+  safeZoneGradient.addColorStop(0, '#1E40AF');  // Darker blue
+  safeZoneGradient.addColorStop(1, '#3B82F6');  // Lighter blue
+  context.fillStyle = safeZoneGradient;
   context.fillRect(0, 7 * grid, canvas.width, grid);
+  
+  // Add network pattern to safe zone
+  context.strokeStyle = '#60A5FA';
+  context.lineWidth = 1;
+  for (let i = 0; i < canvas.width; i += 20) {
+    context.beginPath();
+    context.moveTo(i, 7 * grid);
+    context.lineTo(i + 10, 7 * grid + grid);
+    context.stroke();
+  }
 
-  // start zone
+  // Add text to safe zone
+  context.font = 'bold 20px sans-serif';
+  context.fillStyle = '#93C5FD';  // Light blue color
+  context.textAlign = 'center';
+  context.fillText('RIDE THE INTERNET TO YOUR DESTINATION', canvas.width / 2, 7 * grid + grid/2 + 8);
+
+  // Start zone - Create a secure starting area pattern
+  const startZoneGradient = context.createLinearGradient(0, canvas.height - grid * 2, canvas.width, canvas.height - grid);
+  startZoneGradient.addColorStop(0, '#059669');  // Darker green
+  startZoneGradient.addColorStop(1, '#10B981');  // Lighter green
+  context.fillStyle = startZoneGradient;
   context.fillRect(0, canvas.height - grid * 2, canvas.width, grid);
+
+  // Add text to start zone
+  context.font = 'bold 20px sans-serif';
+  context.fillStyle = '#34D399';
+  context.textAlign = 'center';
+  context.fillText('YOUR ON-PREMISE NETWORK', canvas.width / 2, canvas.height - grid - 10);
+
+  // Add servers to the corners of the start zone
+  context.drawImage(serverImage, 0, canvas.height - grid * 2, grid, grid); // Left server
+  context.drawImage(serverImage, canvas.width - grid, canvas.height - grid * 2, grid, grid); // Right server
 
   // update and draw obstacles
   for (let r = 0; r < rows.length; r++) {
@@ -348,6 +533,28 @@ function loop() {
     if (froggerRow === 0 && col % 3 === 0 &&
         // check to see if there isn't a scored frog already there
         !scoredFroggers.find(frog => frog.x === col * grid)) {
+      
+      // Create a celebratory confetti burst with primary and secondary colors
+      confetti({
+        particleCount: 150,
+        spread: 360,
+        origin: { x: 0.5, y: 0.5 }, // Center of the canvas
+        colors: [
+          '#FF0000', // Red (primary)
+          '#0000FF', // Blue (primary)
+          '#FFFF00', // Yellow (primary)
+          '#00FF00', // Green (secondary)
+          '#FFA500', // Orange (secondary)
+          '#800080'  // Purple (secondary)
+        ],
+        startVelocity: 25,
+        gravity: 0.5,
+        ticks: 300,
+        shapes: ['square'],
+        scalar: 1,
+        zIndex: 100 // Ensure confetti appears above the canvas
+      });
+
       scoredFroggers.push(new Sprite({
         ...frogger,
         x: col * grid,
