@@ -23,14 +23,14 @@
     <div class="flex flex-col items-center justify-center">
         <div class="flex flex-row items-center justify-center">
             <img src="images/files-logo.png" alt="logo" class="w-20">
-            <h1 class="text-white text-4xl font-bold">Transfer the files to the cloud provider destinations!</h1>
+            <h1 class="text-white text-4xl font-bold">Transfer the files to the cloud!</h1>
         </div>
-        <p class="text-white text-sm">Use the arrow keys to move the filer around the screen. Avoid the obstacles and make it to the cloud provider destinations!</p>
+        <p class="text-white text-sm text-center">Use the arrow keys to move the filer around the screen.<br>Avoid the obstacles and use Files.com features to make it to the cloud provider destinations!</p>
         <div class="flex flex-row items-start justify-center gap-8 mt-8">
             <canvas width="624" height="720" id="game"></canvas>
             
             <!-- Game Legend -->
-            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-64">
+            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-72">
                 <h2 class="text-green-400 text-xl font-bold mb-4">Game Legend</h2>
                 
                 <!-- Safe Elements -->
@@ -43,11 +43,19 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/fiber-cable.png" alt="Fiber Cable" class="w-12 h-4">
-                            <span class="text-gray-300 text-sm">Fiber Cable - Ride these to cross</span>
+                            <span class="text-gray-300 text-sm">Fiber Cable - Regional data center connectivity for low latency transfers</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img src="images/multi-thread.png" alt="Multi Thread" class="w-12 h-4">
+                            <span class="text-gray-300 text-sm">Multi Thread - Parallel processing to speed up your transfer</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/wifi.png" alt="WiFi" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">WiFi - Safe to hop on</span>
+                            <span class="text-gray-300 text-sm">Safe Network - Security in transit and at rest</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img src="images/automation.png" alt="Automation" class="w-8 h-8">
+                            <span class="text-gray-300 text-sm">Automation - Streamline your transfers</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/server.png" alt="Server" class="w-8 h-8">
@@ -71,6 +79,10 @@
                       <div class="flex items-center gap-3">
                           <img src="images/hacker.png" alt="Hacker" class="w-8 h-8">
                           <span class="text-gray-300 text-sm">Hacker - Will steal your data</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                          <img src="images/storage-capacity.png" alt="Storage Capacity" class="w-8 h-8">
+                          <span class="text-gray-300 text-sm">Storage Capacity - Out of space</span>
                       </div>
                       <div class="flex items-center gap-3">
                           <img src="images/bad-wifi.png" alt="Bad WiFi" class="w-8 h-8">
@@ -118,6 +130,12 @@ const googleCloudImage = new Image();
 googleCloudImage.src = 'images/google-cloud.png';
 const fiberCableImage = new Image();
 fiberCableImage.src = 'images/fiber-cable.png';
+const multiThreadImage = new Image();
+multiThreadImage.src = 'images/multi-thread.png';
+const automationImage = new Image();
+automationImage.src = 'images/automation.png';
+const storageCapacityImage = new Image();
+storageCapacityImage.src = 'images/storage-capacity.png';
 
 // a simple sprite prototype function
 function Sprite(props) {
@@ -171,40 +189,8 @@ const patterns = [
     size: grid * 4,    // width of the obstacle
     shape: 'rect',     // shape of the obstacle (rect or circle)
     speed: 0.75,       // how fast the obstacle moves and which direction
-    image: fiberCableImage,
+    image: multiThreadImage,
     imageHeight: grid  // height of the image
-  },
-
-  // turtle (now wifi)
-  {
-    spacing: [0,2,0,2,0,2,0,4],
-    color: '#C11F32',
-    size: grid,
-    shape: 'circle',
-    speed: -1,
-    image: wifiImage
-  },
-
-  // long fiber cable (formerly long log)
-  {
-    spacing: [2],
-    color: '#FFFFFF',
-    size: grid * 7,
-    shape: 'rect',
-    speed: 1.5,
-    image: fiberCableImage,
-    imageHeight: grid
-  },
-
-  // fiber cable (formerly log)
-  {
-    spacing: [3],
-    color: '#FFFFFF',
-    size: grid * 3,
-    shape: 'rect',
-    speed: 0.5,
-    image: fiberCableImage,
-    imageHeight: grid
   },
 
   // turtle (now wifi)
@@ -215,6 +201,38 @@ const patterns = [
     shape: 'circle',
     speed: -1,
     image: wifiImage
+  },
+
+  // long fiber cable
+  {
+    spacing: [2],
+    color: '#FFFFFF',
+    size: grid * 7,
+    shape: 'rect',
+    speed: 1.5,
+    image: fiberCableImage,
+    imageHeight: grid
+  },
+
+  // multi-thread (formerly log)
+  {
+    spacing: [3],
+    color: '#FFFFFF',
+    size: grid * 3,
+    shape: 'rect',
+    speed: 0.5,
+    image: multiThreadImage,
+    imageHeight: grid
+  },
+
+  // turtle (now wifi)
+  {
+    spacing: [0,0,1],
+    color: '#C11F32',
+    size: grid,
+    shape: 'circle',
+    speed: -1,
+    image: automationImage
   },
 
   // beach is safe
@@ -250,13 +268,14 @@ const patterns = [
     image: hackerImage
   },
 
-  // bulldozer
+  // storage capacity (formerly bulldozer)
   {
     spacing: [3,3,7],
     color: '#FF0000',
     size: grid,
     shape: 'rect',
-    speed: 0.5
+    speed: 0.5,
+    image: storageCapacityImage
   },
 
   // bad wifi (formerly car)
@@ -348,6 +367,15 @@ function loop() {
   context.fillStyle = '#059669';  // Matching green from our theme
   context.fillRect(0, grid, canvas.width, grid);
 
+  // Draw Box logo in the leftmost green space
+  context.drawImage(
+    boxImage,
+    grid - 48,  // Move slightly more to the left
+    grid,
+    grid,
+    grid
+  );
+
   for (let i = 0; i < 5; i++) {
     // Create gradient for each zone
     const zoneGradient = context.createLinearGradient(
@@ -422,7 +450,7 @@ function loop() {
   context.font = 'bold 20px sans-serif';
   context.fillStyle = '#93C5FD';  // Light blue color
   context.textAlign = 'center';
-  context.fillText('RIDE THE INTERNET TO YOUR DESTINATION', canvas.width / 2, 7 * grid + grid/2 + 8);
+  context.fillText('RIDE FILES.COM FEATURES TO YOUR DESTINATION', canvas.width / 2, 7 * grid + grid/2 + 8);
 
   // Start zone - Create a secure starting area pattern
   const startZoneGradient = context.createLinearGradient(0, canvas.height - grid * 2, canvas.width, canvas.height - grid);
