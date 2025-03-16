@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Basic Frogger HTML Game</title>
+  <title>Filer: The File Transfer Game</title>
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2"></script>
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Files.com Frogger Game" />
+  <meta property="og:description" content="Help the Filer navigate through obstacles using Files.com features to reach cloud provider destinations!" />
+  <meta property="og:image" content="https://thsnyder.github.io/filer/images/filer-social-share.png" />
+  <meta property="og:url" content="https://thsnyder.github.io/filer/" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Files.com Filer Game" />
+  <meta name="twitter:description" content="Help the Filer navigate through obstacles using Files.com features to reach cloud provider destinations!" />
+  <meta name="twitter:image" content="https://thsnyder.github.io/filer/images/filer-social-share.png" />
+
+  <link rel="icon" type="image/png" href="/images/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/images/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/images/favicon/site.webmanifest" />
+
   <style>
   html, body {
     height: 100%;
@@ -22,7 +42,9 @@
 <body>
     <div class="flex flex-col items-center justify-center">
         <div class="flex flex-row items-center justify-center">
-            <img src="images/files-logo.png" alt="logo" class="w-20">
+            <a href="https://www.files.com" target="_blank" rel="noopener noreferrer">
+                <img src="images/files-logo.png" alt="logo" class="w-20">
+            </a>
             <h1 class="text-white text-4xl font-bold">Transfer the files to the cloud!</h1>
         </div>
         <p class="text-white text-sm text-center">Use the arrow keys to move the filer around the screen.<br>Avoid the obstacles and use Files.com features to make it to the cloud provider destinations!</p>
@@ -30,12 +52,12 @@
             <canvas width="624" height="720" id="game"></canvas>
             
             <!-- Game Legend -->
-            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-72">
+            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80">
                 <h2 class="text-green-400 text-xl font-bold mb-4">Game Legend</h2>
                 
                 <!-- Safe Elements -->
                 <div class="mb-6">
-                    <h3 class="text-green-500 font-bold mb-2">Safe to Use</h3>
+                    <h3 class="text-green-500 font-bold mb-2">Safe to Ride</h3>
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
                             <img src="images/cloud.png" alt="Cloud Service" class="w-8 h-8">
@@ -51,11 +73,11 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/wifi.png" alt="WiFi" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Safe Network - Security in transit and at rest</span>
+                            <span class="text-gray-300 text-sm">Secure Network - Encrypted in transit and at rest</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/automation.png" alt="Automation" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Automation - Streamline your transfers</span>
+                            <span class="text-gray-300 text-sm">Automated Transfers - Schedule and automate your transfers</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <img src="images/server.png" alt="Server" class="w-8 h-8">
