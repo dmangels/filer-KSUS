@@ -251,6 +251,40 @@ let safePathBonus = 0;
 let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
 let isHardMode = false;
 let speedMultiplier = 1;
+let selectedMode = 'normal'; // Track which mode is currently selected
+
+// Function to update mode selection UI
+function updateModeSelection() {
+  if (selectedMode === 'normal') {
+    normalModeButton.classList.add('ring-4', 'ring-green-500', 'scale-110', 'transition-transform', 'duration-200');
+    hardModeButton.classList.remove('ring-4', 'ring-red-500', 'scale-110', 'transition-transform', 'duration-200');
+  } else {
+    normalModeButton.classList.remove('ring-4', 'ring-green-500', 'scale-110', 'transition-transform', 'duration-200');
+    hardModeButton.classList.add('ring-4', 'ring-red-500', 'scale-110', 'transition-transform', 'duration-200');
+  }
+}
+
+// Function to handle mode selection keyboard events
+function handleModeSelection(e) {
+  if (modeScreen.classList.contains('hidden')) return;
+
+  switch(e.which) {
+    case 38: // Up arrow
+      selectedMode = 'normal';
+      updateModeSelection();
+      break;
+    case 40: // Down arrow
+      selectedMode = 'hard';
+      updateModeSelection();
+      break;
+    case 13: // Enter
+      startGame(selectedMode);
+      break;
+  }
+}
+
+// Add keyboard event listener for mode selection
+document.addEventListener('keydown', handleModeSelection);
 
 // Function to update the leaderboard display
 function updateLeaderboard() {
@@ -269,7 +303,7 @@ function updateLeaderboard() {
       </div>
       <div class="text-right">
         <div class="text-green-400">${entry.score}</div>
-        <div class="text-xs text-gray-400">${entry.company} • ${entry.mode}</div>
+        <div class="text-xs text-gray-400">${entry.company}</div>
       </div>
     </div>
   `).join('');
@@ -348,77 +382,6 @@ function updatePatternSpeeds() {
   }
 }
 
-// Add mode selection handlers
-normalModeButton.addEventListener('click', () => startGame('normal'));
-hardModeButton.addEventListener('click', () => startGame('hard'));
-
-// Modify the win condition to show the form
-function checkWinCondition() {
-  // Check if we have exactly 5 scored froggers (one for each end zone)
-  if (scoredFroggers.length === 5 && !gameWon) {
-    gameWon = true;
-    
-    // Calculate final score
-    const timeElapsed = (Date.now() - startTime) / 1000; // in seconds
-    const timeBonus = Math.max(0, 1000 - (timeElapsed * 10)); // 1000 points max, decreasing over time
-    score += timeBonus;
-    
-    // Update win screen with score details
-    const scoreDetails = document.createElement('div');
-    scoreDetails.className = 'text-gray-300 space-y-2';
-    scoreDetails.innerHTML = `
-      <p>Mode: ${isHardMode ? 'Hard' : 'Normal'}</p>
-      <p>Cloud Providers Reached: ${scoredFroggers.length}/5</p>
-      <p>Safe Path Bonus: ${safePathBonus}</p>
-      <p>Time Bonus: ${Math.round(timeBonus)}</p>
-      <p class="text-xl font-bold text-green-400 mt-4">Final Score: ${score}</p>
-    `;
-    
-    const existingScoreDetails = winScreen.querySelector('.score-details');
-    if (existingScoreDetails) {
-      existingScoreDetails.remove();
-    }
-    scoreDetails.classList.add('score-details');
-    winScreen.querySelector('.space-y-4').insertBefore(scoreDetails, winScreen.querySelector('.space-y-4').firstChild);
-    
-    // Show the form and hide play again button
-    highScoreForm.style.display = 'block';
-    playAgainContainer.classList.add('hidden');
-    
-    winScreen.classList.remove('hidden');
-    
-    // Create a more elaborate confetti celebration
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const colors = ['#FF0000', '#0000FF', '#FFFF00', '#00FF00', '#FFA500', '#800080'];
-    
-    function randomInRange(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-    
-    (function frame() {
-      confetti({
-        particleCount: 2,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: colors
-      });
-      confetti({
-        particleCount: 2,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: colors
-      });
-      
-      if (Date.now() < animationEnd) {
-        requestAnimationFrame(frame);
-      }
-    }());
-  }
-}
-
 // Modify the play again functionality to reset the form
 playAgainButton.addEventListener('click', () => {
   // Reset game state
@@ -437,14 +400,43 @@ playAgainButton.addEventListener('click', () => {
   highScoreForm.style.display = 'block';
   playAgainContainer.classList.add('hidden');
   
-  // Show mode selection screen
+  // Show mode selection screen and reset selection
   modeScreen.classList.remove('hidden');
+  selectedMode = 'normal';
+  updateModeSelection();
   
   // Reset frogger position
   frogger.x = grid * 6;
   frogger.y = grid * 13;
   frogger.speed = 0;
 });
+
+// Function to restart the game
+function restartGame() {
+  // Reset game state
+  scoredFroggers.length = 0;
+  gameWon = false;
+  winScreen.classList.add('hidden');
+  
+  // Reset score and stats
+  score = 0;
+  collisions = 0;
+  safePathBonus = 0;
+  startTime = Date.now();
+  
+  // Reset frogger position
+  frogger.x = grid * 6;
+  frogger.y = grid * 13;
+  frogger.speed = 0;
+  
+  // Show mode selection screen and reset selection
+  modeScreen.classList.remove('hidden');
+  selectedMode = 'normal';
+  updateModeSelection();
+}
+
+// Initialize mode selection UI
+updateModeSelection();
 
 // Initialize leaderboard on game start
 updateLeaderboard();
@@ -744,6 +736,12 @@ function loop() {
 
 // listen to keyboard events to move frogger
 document.addEventListener('keydown', function(e) {
+  // Restart game with 'R' key
+  if (e.which === 82) { // 82 is the key code for 'R'
+    restartGame();
+    return;
+  }
+
   // left arrow key
   if (e.which === 37) {
     frogger.x -= grid;

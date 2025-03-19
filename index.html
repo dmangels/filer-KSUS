@@ -47,7 +47,10 @@
             </a>
             <h1 class="text-white text-4xl font-bold">Filer: Transfer the files to the cloud!</h1>
         </div>
-        <p class="text-white text-sm text-center">Use the arrow keys to move the filer around the screen.</p>
+        <div class="text-white text-sm text-center space-y-1">
+            <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer</p>
+            <p>Press 'R' to restart the game</p>
+        </div>
         <div class="flex flex-row items-start justify-center gap-8 mt-4">
             <!-- Leaderboard -->
             <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80">
@@ -128,23 +131,21 @@
     </div>
     <!-- Mode Selection Screen -->
     <div id="modeScreen" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-900 p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">Select Game Mode</h2>
-            <p class="text-xl text-gray-300 mb-8">Choose your challenge level</p>
+        <div class="bg-gray-500 p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center border-2 border-white">
+          <div class="flex flex-row items-center justify-center">
+            <a href="https://www.files.com" target="_blank" rel="noopener noreferrer">
+                <img src="images/files-logo.png" alt="logo" class="w-40">
+            </a>
+            <h1 class="text-white text-4xl font-bold">Filer: Transfer the files to the cloud!</h1>
+        </div>            
+        <p class="text-xl text-gray-300 my-8">Choose your challenge level</p>
             <div class="space-y-4">
                 <button id="normalMode" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">
                     Normal Mode: Easier to get on Leaderboard
                 </button>
                 <button id="hardMode" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Hard Mode: Win amazing prizes!
+                    Hard Mode: Win secret swag prizes!
                 </button>
-                <div class="mt-6 text-left text-gray-300">
-                    <h3 class="font-bold mb-2">Mode Differences:</h3>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>Normal Mode: Easier to get on Leaderboard</li>
-                        <li>Hard Mode: Win amazing prizes!</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -157,7 +158,9 @@
                 <div class="score-details text-gray-300 space-y-2">
                     <!-- Score details will be populated here -->
                 </div>
-                <p class="text-gray-300">Your files are now safely stored across multiple cloud providers.<br><br>Shouldn't transferring files be easier than this?<br><br>Talk to one of our Customer Success Reps to learn more about Files.com!</p>
+                <p class="text-gray-300">Your files are now safely stored across multiple cloud providers.</p>
+                <p class="text-xl text-white">Shouldn't transferring files be easier than this?</p>
+                <p class="text-gray-300">Talk to one of our Customer Success Reps to learn more about Files.com!</p>
                 <p class="text-gray-300">Thanks for playing!</p>
                 
                 <!-- High Score Form -->
