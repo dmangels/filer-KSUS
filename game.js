@@ -7,6 +7,18 @@ const gridGap = 10;
 // Load the images
 const filerImage = new Image();
 filerImage.src = 'images/filer.png';
+const filerCsvImage = new Image();
+filerCsvImage.src = 'images/filer-csv.png';
+const filerJsonImage = new Image();
+filerJsonImage.src = 'images/filer-json.png';
+const filerPdfImage = new Image();
+filerPdfImage.src = 'images/filer-pdf.png';
+const filerXmlImage = new Image();
+filerXmlImage.src = 'images/filer-xml.png';
+
+// Array of filer images to use in sequence
+const filerImages = [filerImage, filerCsvImage, filerJsonImage, filerPdfImage, filerXmlImage];
+
 const serverImage = new Image();
 serverImage.src = 'images/server.png';
 const wifiImage = new Image();
@@ -441,6 +453,51 @@ updateModeSelection();
 // Initialize leaderboard on game start
 updateLeaderboard();
 
+// Function to check if the game has been won
+function checkWinCondition() {
+  // Check if we have exactly 5 scored froggers (one for each destination)
+  if (scoredFroggers.length === 5) {
+    gameWon = true;
+    
+    // Calculate final score details
+    const timeBonus = Math.max(0, 1000 - (Date.now() - startTime) / 1000);
+    const finalScore = score + timeBonus;
+    
+    // Update score details in win screen
+    const scoreDetails = document.querySelector('.score-details');
+    scoreDetails.innerHTML = `
+      <p>Base Score: ${score}</p>
+      <p>Safe Path Bonus: ${safePathBonus}</p>
+      <p>Time Bonus: ${Math.round(timeBonus)}</p>
+      <p class="text-xl text-green-400">Final Score: ${finalScore}</p>
+    `;
+    
+    // Show win screen
+    winScreen.classList.remove('hidden');
+    
+    // Trigger a big confetti celebration
+    confetti({
+      particleCount: 300,
+      spread: 360,
+      origin: { x: 0.5, y: 0.5 },
+      colors: [
+        '#FF0000',
+        '#0000FF',
+        '#FFFF00',
+        '#00FF00',
+        '#FFA500',
+        '#800080'
+      ],
+      startVelocity: 30,
+      gravity: 0.5,
+      ticks: 500,
+      shapes: ['square'],
+      scalar: 1.5,
+      zIndex: 100
+    });
+  }
+}
+
 // game loop
 function loop() {
   requestAnimationFrame(loop);
@@ -715,12 +772,17 @@ function loop() {
         zIndex: 100
       });
 
+      // Add the scored frogger with the current filer image
       scoredFroggers.push(new Sprite({
         ...frogger,
         x: col * grid,
         y: frogger.y + 5,
-        image: filerImage
+        image: frogger.image  // Use the current filer image instead of the original
       }));
+
+      // Update the active filer's image to the next one in sequence
+      const nextFilerIndex = (scoredFroggers.length) % filerImages.length;
+      frogger.image = filerImages[nextFilerIndex];
 
       // Check for win condition after adding a new scored frogger
       checkWinCondition();
@@ -736,6 +798,11 @@ function loop() {
 
 // listen to keyboard events to move frogger
 document.addEventListener('keydown', function(e) {
+  // Only handle game controls if the win screen is hidden
+  if (!winScreen.classList.contains('hidden')) {
+    return;
+  }
+
   // Restart game with 'R' key
   if (e.which === 82) { // 82 is the key code for 'R'
     restartGame();
