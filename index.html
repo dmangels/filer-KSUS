@@ -31,30 +31,24 @@
     margin: 0;
   }
 
-  body {
-    background: #020817;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   </style>
 </head>
-<body>
+<body class="bg-black">
     <div class="flex flex-col items-center justify-center">
         <div class="flex flex-row items-center justify-center">
             <a href="https://www.files.com" target="_blank" rel="noopener noreferrer">
                 <img src="images/files-logo.png" alt="logo" class="w-20">
             </a>
-            <h1 class="text-white text-4xl font-bold">Filer: Transfer the files to the cloud!</h1>
+            <h1 class="text-white text-4xl font-bold">Filer: Transfer all five files to the cloud!</h1>
         </div>
-        <div class="text-white text-sm text-center space-y-1">
+        <div class="text-white text-md text-center space-y-1">
             <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer</p>
-            <p>Press 'R' to restart the game</p>
+            <p>Press 'R' to start a new game</p>
         </div>
-        <div class="flex flex-row items-start justify-center gap-8 mt-4">
+        <div class="flex flex-row items-start justify-center gap-8 mt-2">
             <!-- Leaderboard -->
-            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-                <h2 class="text-green-400 text-xl font-bold mb-4">Filer Leaderboard</h2>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+                <h2 class="text-green-400 text-xl font-bold mb-4">🏆 Filer Leaderboard</h2>
                 <div id="leaderboard" class="space-y-2">
                     <!-- Leaderboard entries will be populated here -->
                 </div>
@@ -63,12 +57,12 @@
         <canvas width="624" height="720" id="game"></canvas>
             
             <!-- Game Legend -->
-            <div class="bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-                <h2 class="text-green-400 text-xl font-bold mb-4">Game Legend</h2>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+                <h2 class="text-green-400 text-xl font-bold mb-4">🗺️ Game Legend</h2>
                 
                 <!-- Safe Elements -->
                 <div class="mb-6">
-                    <h3 class="text-green-500 font-bold mb-2">Safe to Ride</h3>
+                    <h3 class="text-green-500 font-bold mb-2">✅ Safe to Ride</h3>
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
                             <img src="images/cloud.png" alt="Cloud Service" class="w-8 h-8">
@@ -99,7 +93,7 @@
                 
                 <!-- Dangerous Elements -->
                 <div>
-                    <h3 class="text-red-500 font-bold mb-2">Avoid These</h3>
+                    <h3 class="text-red-500 font-bold mb-2">🛑 Avoid These</h3>
                     <div class="space-y-3">
                       <div class="flex items-center gap-3">
                         <img src="images/bad-packet.png" alt="Bad Packet" class="w-8 h-8">
@@ -126,8 +120,25 @@
             </div>
         </div>
     </div>
-    <div class="fixed top-0 right-0 p-2">
-        <p class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1">Made with ❤️ and ☕️<br>by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
+    <div class="fixed top-0 right-0 p-2 flex items-start gap-2">
+        <div class="relative group">
+            <button id="settingsButton" class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1 hover:bg-opacity-75 transition-colors">
+                ⚙️ Settings
+            </button>
+            <div class="absolute right-0 mt-1 w-48 bg-gray-800 rounded-md shadow-lg hidden group-hover:block">
+                <div class="py-1">
+                    <button id="downloadCsv" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                        📥 Download All Scores
+                    </button>
+                    <button id="clearLeaderboard" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                        🗑️ Clear Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="made-with-love">
+            <p class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1">Made with ❤️ and ☕️<br>by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
+        </div>
     </div>
     <!-- Mode Selection Screen -->
     <div id="modeScreen" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -153,15 +164,13 @@
     <div id="winScreen" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
         <div class="bg-gray-900 p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center">
             <h2 class="text-4xl font-bold text-white mb-4">Congratulations! 🎉</h2>
-            <p class="text-xl text-white mb-6">You've successfully transferred all your files to the cloud!</p>
+            <p class="text-xl text-white mb-6">Your files are now safely stored across multiple cloud providers!<p>
             <div class="space-y-4">
                 <div class="score-details text-gray-300 space-y-2">
                     <!-- Score details will be populated here -->
                 </div>
-                <p class="text-gray-300">Your files are now safely stored across multiple cloud providers.</p>
                 <p class="text-xl text-white">Shouldn't transferring files be easier than this?</p>
                 <p class="text-gray-300">Talk to one of our Customer Success Reps to learn more about Files.com!</p>
-                <p class="text-gray-300">Thanks for playing!</p>
                 
                 <!-- High Score Form -->
                 <form id="highScoreForm" class="space-y-4 text-left">

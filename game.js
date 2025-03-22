@@ -255,6 +255,9 @@ const highScoreForm = document.getElementById('highScoreForm');
 const modeScreen = document.getElementById('modeScreen');
 const normalModeButton = document.getElementById('normalMode');
 const hardModeButton = document.getElementById('hardMode');
+const settingsButton = document.getElementById('settingsButton');
+const downloadCsvButton = document.getElementById('downloadCsv');
+const clearLeaderboardButton = document.getElementById('clearLeaderboard');
 let gameWon = false;
 let score = 0;
 let startTime = Date.now();
@@ -325,11 +328,15 @@ function updateLeaderboard() {
 function handleFormSubmit(e) {
   e.preventDefault();
   
+  // Calculate final score including time bonus
+  const timeBonus = Math.max(0, 1000 - (Date.now() - startTime) / 1000);
+  const finalScore = Math.round(score + timeBonus);
+  
   const formData = {
     displayName: document.getElementById('displayName').value,
     email: document.getElementById('email').value,
     company: document.getElementById('company').value,
-    score: score,
+    score: finalScore,  // Use the final score instead of just the base score
     mode: isHardMode ? 'Hard' : 'Normal',
     date: new Date().toISOString()
   };
@@ -461,14 +468,11 @@ function checkWinCondition() {
     
     // Calculate final score details
     const timeBonus = Math.max(0, 1000 - (Date.now() - startTime) / 1000);
-    const finalScore = score + timeBonus;
+    const finalScore = Math.round(score + timeBonus);
     
     // Update score details in win screen
     const scoreDetails = document.querySelector('.score-details');
     scoreDetails.innerHTML = `
-      <p>Base Score: ${score}</p>
-      <p>Safe Path Bonus: ${safePathBonus}</p>
-      <p>Time Bonus: ${Math.round(timeBonus)}</p>
       <p class="text-xl text-green-400">Final Score: ${finalScore}</p>
     `;
     
@@ -497,6 +501,84 @@ function checkWinCondition() {
     });
   }
 }
+
+// Function to download scores as CSV
+function downloadScoresAsCsv() {
+  // Create CSV header
+  let csvContent = "Display Name,Email,Company,Score,Mode,Date\n";
+  
+  // Add each score as a row
+  highScores.forEach(score => {
+    csvContent += `${score.displayName},${score.email},${score.company},${score.score},${score.mode},${score.date}\n`;
+  });
+  
+  // Create and trigger download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `filer-scores-${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Function to clear leaderboard
+function clearLeaderboard() {
+  if (confirm('Are you sure you want to clear the leaderboard? This action cannot be undone.')) {
+    // Default entries from popular fictional media
+    highScores = [
+      {
+        displayName: "Mark Scout",
+        email: "mark.scout@lumon.com",
+        company: "Lumon Industries",
+        score: 700,
+        mode: "Hard",
+        date: "2024-03-15T10:30:00.000Z"
+      },
+      {
+        displayName: "Tony Stark",
+        email: "tony.stark@starkindustries.com",
+        company: "Stark Industries",
+        score: 600,
+        mode: "Hard",
+        date: "2024-03-14T15:45:00.000Z"
+      },
+      {
+        displayName: "Richard Hendricks",
+        email: "richard@piedpiper.com",
+        company: "Pied Piper",
+        score: 500,
+        mode: "Normal",
+        date: "2024-03-13T09:15:00.000Z"
+      },
+      {
+        displayName: "Billy Butcher",
+        email: "billy.butcher@cia.gov",
+        company: "The Boys",
+        score: 400,
+        mode: "Hard",
+        date: "2024-03-12T14:20:00.000Z"
+      },
+      {
+        displayName: "Homer Simpson",
+        email: "homer.simpson@springfieldnuclear.com",
+        company: "Springfield Nuclear",
+        score: 300,
+        mode: "Normal",
+        date: "2024-03-11T11:10:00.000Z"
+      }
+    ];
+    
+    localStorage.setItem('highScores', JSON.stringify(highScores));
+    updateLeaderboard();
+  }
+}
+
+// Add event listeners for settings buttons
+downloadCsvButton.addEventListener('click', downloadScoresAsCsv);
+clearLeaderboardButton.addEventListener('click', clearLeaderboard);
 
 // game loop
 function loop() {
