@@ -268,6 +268,38 @@ let isHardMode = false;
 let speedMultiplier = 1;
 let selectedMode = 'normal'; // Track which mode is currently selected
 
+// Add gamepad support variables at the top with other constants
+let gamepadConnected = false;
+let gamepadIndex = null;
+
+// Add button state tracking with previous and current states
+let buttonStates = {
+  left: { current: false, previous: false },
+  right: { current: false, previous: false },
+  up: { current: false, previous: false },
+  down: { current: false, previous: false }
+};
+
+// Add rumble effect function
+async function triggerRumble() {
+  if (!gamepadConnected || gamepadIndex === null) return;
+  
+  const gamepad = navigator.getGamepads()[gamepadIndex];
+  if (!gamepad || !gamepad.vibrationActuator) return;
+
+  try {
+    // Rumble with high intensity for 100ms
+    await gamepad.vibrationActuator.playEffect('dual-rumble', {
+      startDelay: 0,
+      duration: 100,
+      weakMagnitude: 1.0,
+      strongMagnitude: 1.0
+    });
+  } catch (error) {
+    console.log('Rumble not supported on this gamepad');
+  }
+}
+
 // Function to update mode selection UI
 function updateModeSelection() {
   if (selectedMode === 'normal') {
@@ -283,16 +315,22 @@ function updateModeSelection() {
 function handleModeSelection(e) {
   if (modeScreen.classList.contains('hidden')) return;
 
-  switch(e.which) {
+  // Handle both keyboard and gamepad input
+  const input = e.type === 'keydown' ? e.which : e;
+  
+  switch(input) {
     case 38: // Up arrow
+    case 12: // D-pad Up
       selectedMode = 'normal';
       updateModeSelection();
       break;
     case 40: // Down arrow
+    case 13: // D-pad Down
       selectedMode = 'hard';
       updateModeSelection();
       break;
     case 13: // Enter
+    case 9:  // Start button
       startGame(selectedMode);
       break;
   }
@@ -580,9 +618,94 @@ function clearLeaderboard() {
 downloadCsvButton.addEventListener('click', downloadScoresAsCsv);
 clearLeaderboardButton.addEventListener('click', clearLeaderboard);
 
-// game loop
+// Function to handle gamepad connection/disconnection
+function handleGamepadConnection(e) {
+  if (e.type === 'gamepadconnected') {
+    gamepadConnected = true;
+    gamepadIndex = e.gamepad.index;
+    console.log('Gamepad connected:', e.gamepad.id);
+  } else if (e.type === 'gamepaddisconnected') {
+    gamepadConnected = false;
+    gamepadIndex = null;
+    console.log('Gamepad disconnected');
+  }
+}
+
+// Add gamepad connection event listeners
+window.addEventListener('gamepadconnected', handleGamepadConnection);
+window.addEventListener('gamepaddisconnected', handleGamepadConnection);
+
+// Function to handle gamepad input
+function handleGamepadInput() {
+  if (!gamepadConnected || gamepadIndex === null) return;
+
+  const gamepad = navigator.getGamepads()[gamepadIndex];
+  if (!gamepad) return;
+
+  // Handle mode selection on start screen
+  if (!modeScreen.classList.contains('hidden')) {
+    // Handle D-pad buttons for mode selection
+    if (gamepad.buttons[14].pressed) { // Left
+      handleModeSelection(37); // Simulate left arrow
+    }
+    if (gamepad.buttons[15].pressed) { // Right
+      handleModeSelection(39); // Simulate right arrow
+    }
+    if (gamepad.buttons[12].pressed) { // Up
+      handleModeSelection(12); // D-pad Up
+    }
+    if (gamepad.buttons[13].pressed) { // Down
+      handleModeSelection(13); // D-pad Down
+    }
+    if (gamepad.buttons[9].pressed) { // Start button
+      handleModeSelection(9); // Start button
+    }
+    return; // Skip regular game controls while on mode selection screen
+  }
+
+  // Update button states
+  buttonStates.left.previous = buttonStates.left.current;
+  buttonStates.right.previous = buttonStates.right.current;
+  buttonStates.up.previous = buttonStates.up.current;
+  buttonStates.down.previous = buttonStates.down.current;
+
+  buttonStates.left.current = gamepad.buttons[14].pressed;
+  buttonStates.right.current = gamepad.buttons[15].pressed;
+  buttonStates.up.current = gamepad.buttons[12].pressed;
+  buttonStates.down.current = gamepad.buttons[13].pressed;
+
+  // Handle D-pad buttons for game controls with improved debouncing
+  if (buttonStates.left.current && !buttonStates.left.previous) { // Left
+    frogger.x -= grid;
+  }
+  if (buttonStates.right.current && !buttonStates.right.previous) { // Right
+    frogger.x += grid;
+  }
+  if (buttonStates.up.current && !buttonStates.up.previous) { // Up
+    frogger.y -= grid;
+  }
+  if (buttonStates.down.current && !buttonStates.down.previous) { // Down
+    frogger.y += grid;
+  }
+
+  // Handle action buttons (X, Square, Circle, Triangle)
+  if (gamepad.buttons[3].pressed) { // X button
+    restartGame();
+  }
+
+  // Handle Select button for restart
+  if (gamepad.buttons[8].pressed) { // Select button
+    restartGame();
+  }
+}
+
+// Modify the game loop to include gamepad input
 function loop() {
   requestAnimationFrame(loop);
+  
+  // Handle gamepad input
+  handleGamepadInput();
+  
   context.clearRect(0,0,canvas.width,canvas.height);
 
   // draw the game background
@@ -807,6 +930,8 @@ function loop() {
     if (froggerRow > rows.length / 2) {
       frogger.x = grid * 6;
       frogger.y = grid * 13;
+      // Trigger rumble effect only when player resets to beginning
+      triggerRumble();
     }
     // move frogger along with obstacle
     else {
@@ -874,6 +999,8 @@ function loop() {
     if (froggerRow < rows.length / 2 - 1) {
       frogger.x = grid * 6;
       frogger.y = grid * 13;
+      // Trigger rumble effect when falling off a safe riding element
+      triggerRumble();
     }
   }
 }
