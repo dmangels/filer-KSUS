@@ -248,8 +248,6 @@ for (let i = 0; i < patterns.length; i++) {
 
 // Add at the top with other constants
 const winScreen = document.getElementById('winScreen');
-const playAgainButton = document.getElementById('playAgain');
-const playAgainContainer = document.getElementById('playAgainContainer');
 const leaderboard = document.getElementById('leaderboard');
 const highScoreForm = document.getElementById('highScoreForm');
 const modeScreen = document.getElementById('modeScreen');
@@ -267,6 +265,7 @@ let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
 let isHardMode = false;
 let speedMultiplier = 1;
 let selectedMode = 'normal'; // Track which mode is currently selected
+let finalScore = 0; // Store the final score when game is won
 
 // Add gamepad support variables at the top with other constants
 let gamepadConnected = false;
@@ -323,15 +322,18 @@ function handleModeSelection(e) {
     case 12: // D-pad Up
       selectedMode = 'normal';
       updateModeSelection();
+      e.preventDefault(); // Prevent default behavior
       break;
     case 40: // Down arrow
-    case 13: // D-pad Down
+    case 14: // D-pad Down (changed from 13 to 14)
       selectedMode = 'hard';
       updateModeSelection();
+      e.preventDefault(); // Prevent default behavior
       break;
-    case 13: // Enter
+    case 13: // Enter/Return
     case 9:  // Start button
       startGame(selectedMode);
+      e.preventDefault(); // Prevent default behavior
       break;
   }
 }
@@ -366,15 +368,11 @@ function updateLeaderboard() {
 function handleFormSubmit(e) {
   e.preventDefault();
   
-  // Calculate final score including time bonus
-  const timeBonus = Math.max(0, 1000 - (Date.now() - startTime) / 1000);
-  const finalScore = Math.round(score + timeBonus);
-  
   const formData = {
     displayName: document.getElementById('displayName').value,
     email: document.getElementById('email').value,
     company: document.getElementById('company').value,
-    score: finalScore,  // Use the final score instead of just the base score
+    score: finalScore,  // Use the stored final score
     mode: isHardMode ? 'Hard' : 'Normal',
     date: new Date().toISOString()
   };
@@ -388,9 +386,13 @@ function handleFormSubmit(e) {
   // Update leaderboard
   updateLeaderboard();
   
-  // Hide the form and show play again button
-  highScoreForm.style.display = 'none';
-  playAgainContainer.classList.remove('hidden');
+  // Hide the win screen and show mode selection screen
+  winScreen.classList.add('hidden');
+  modeScreen.classList.remove('hidden');
+  
+  // Reset selection to normal mode
+  selectedMode = 'normal';
+  updateModeSelection();
 }
 
 // Add form submit handler
@@ -412,13 +414,27 @@ function startGame(mode) {
   safePathBonus = 0;
   startTime = Date.now();
   
-  // Reset frogger position
+  // Reset destination indicators
+  for (let i = 1; i <= 5; i++) {
+    const destElement = document.getElementById(`dest${i}`);
+    if (destElement) {
+      destElement.classList.remove('bg-green-500');
+      destElement.classList.add('bg-gray-700');
+      destElement.textContent = '0';
+    }
+  }
+  
+  // Reset frogger position and image
   frogger.x = grid * 6;
   frogger.y = grid * 13;
   frogger.speed = 0;
+  frogger.image = filerImage;  // Reset to original filer image
   
   // Update patterns with new speeds
   updatePatternSpeeds();
+  
+  // Update the leaderboard display
+  updateLeaderboard();
 }
 
 // Function to update pattern speeds based on mode
@@ -439,65 +455,6 @@ function updatePatternSpeeds() {
   }
 }
 
-// Modify the play again functionality to reset the form
-playAgainButton.addEventListener('click', () => {
-  // Reset game state
-  scoredFroggers.length = 0;
-  gameWon = false;
-  winScreen.classList.add('hidden');
-  
-  // Reset score
-  score = 0;
-  collisions = 0;
-  safePathBonus = 0;
-  startTime = Date.now();
-  
-  // Reset form and show play again button
-  highScoreForm.reset();
-  highScoreForm.style.display = 'block';
-  playAgainContainer.classList.add('hidden');
-  
-  // Show mode selection screen and reset selection
-  modeScreen.classList.remove('hidden');
-  selectedMode = 'normal';
-  updateModeSelection();
-  
-  // Reset frogger position
-  frogger.x = grid * 6;
-  frogger.y = grid * 13;
-  frogger.speed = 0;
-});
-
-// Function to restart the game
-function restartGame() {
-  // Reset game state
-  scoredFroggers.length = 0;
-  gameWon = false;
-  winScreen.classList.add('hidden');
-  
-  // Reset score and stats
-  score = 0;
-  collisions = 0;
-  safePathBonus = 0;
-  startTime = Date.now();
-  
-  // Reset frogger position
-  frogger.x = grid * 6;
-  frogger.y = grid * 13;
-  frogger.speed = 0;
-  
-  // Show mode selection screen and reset selection
-  modeScreen.classList.remove('hidden');
-  selectedMode = 'normal';
-  updateModeSelection();
-}
-
-// Initialize mode selection UI
-updateModeSelection();
-
-// Initialize leaderboard on game start
-updateLeaderboard();
-
 // Function to check if the game has been won
 function checkWinCondition() {
   // Check if we have exactly 5 scored froggers (one for each destination)
@@ -506,7 +463,7 @@ function checkWinCondition() {
     
     // Calculate final score details
     const timeBonus = Math.max(0, 1000 - (Date.now() - startTime) / 1000);
-    const finalScore = Math.round(score + timeBonus);
+    finalScore = Math.round(score + timeBonus);
     
     // Update score details in win screen
     const scoreDetails = document.querySelector('.score-details');
@@ -655,7 +612,7 @@ function handleGamepadInput() {
       handleModeSelection(12); // D-pad Up
     }
     if (gamepad.buttons[13].pressed) { // Down
-      handleModeSelection(13); // D-pad Down
+      handleModeSelection(14); // D-pad Down
     }
     if (gamepad.buttons[9].pressed) { // Start button
       handleModeSelection(9); // Start button
@@ -688,14 +645,15 @@ function handleGamepadInput() {
     frogger.y += grid;
   }
 
-  // Handle action buttons (X, Square, Circle, Triangle)
-  if (gamepad.buttons[3].pressed) { // X button
-    restartGame();
-  }
-
   // Handle Select button for restart
   if (gamepad.buttons[8].pressed) { // Select button
-    restartGame();
+    // Hide win screen if it's showing
+    winScreen.classList.add('hidden');
+    // Show mode selection screen
+    modeScreen.classList.remove('hidden');
+    // Reset selection to normal mode
+    selectedMode = 'normal';
+    updateModeSelection();
   }
 }
 
@@ -987,6 +945,15 @@ function loop() {
         image: frogger.image  // Use the current filer image instead of the original
       }));
 
+      // Update the destination indicator
+      const destIndex = scoredFroggers.length - 1;
+      const destElement = document.getElementById(`dest${destIndex + 1}`);
+      if (destElement) {
+        destElement.classList.remove('bg-gray-700');
+        destElement.classList.add('bg-green-500');
+        destElement.textContent = '✓';
+      }
+
       // Update the active filer's image to the next one in sequence
       const nextFilerIndex = (scoredFroggers.length) % filerImages.length;
       frogger.image = filerImages[nextFilerIndex];
@@ -1007,14 +974,26 @@ function loop() {
 
 // listen to keyboard events to move frogger
 document.addEventListener('keydown', function(e) {
-  // Only handle game controls if the win screen is hidden
-  if (!winScreen.classList.contains('hidden')) {
+  // Handle mode selection if on mode screen
+  if (!modeScreen.classList.contains('hidden')) {
+    handleModeSelection(e);
     return;
   }
 
   // Restart game with 'R' key
   if (e.which === 82) { // 82 is the key code for 'R'
-    restartGame();
+    // Hide win screen if it's showing
+    winScreen.classList.add('hidden');
+    // Show mode selection screen
+    modeScreen.classList.remove('hidden');
+    // Reset selection to normal mode
+    selectedMode = 'normal';
+    updateModeSelection();
+    return;
+  }
+
+  // Only handle game controls if the win screen is hidden
+  if (!winScreen.classList.contains('hidden')) {
     return;
   }
 
@@ -1026,7 +1005,6 @@ document.addEventListener('keydown', function(e) {
   else if (e.which === 39) {
     frogger.x += grid;
   }
-
   // up arrow key
   else if (e.which === 38) {
     frogger.y -= grid;
@@ -1037,8 +1015,8 @@ document.addEventListener('keydown', function(e) {
   }
 
   // clamp frogger position to stay on screen
-  frogger.x = Math.min( Math.max(0, frogger.x), canvas.width - grid);
-  frogger.y = Math.min( Math.max(grid, frogger.y), canvas.height - grid * 2);
+  frogger.x = Math.min(Math.max(0, frogger.x), canvas.width - grid);
+  frogger.y = Math.min(Math.max(grid, frogger.y), canvas.height - grid * 2);
 });
 
 // start the game
