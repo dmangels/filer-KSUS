@@ -250,7 +250,6 @@ for (let i = 0; i < patterns.length; i++) {
 const winScreen = document.getElementById('winScreen');
 const leaderboard = document.getElementById('leaderboard');
 const highScoreForm = document.getElementById('highScoreForm');
-const modeScreen = document.getElementById('modeScreen');
 const normalModeButton = document.getElementById('normalMode');
 const hardModeButton = document.getElementById('hardMode');
 const settingsButton = document.getElementById('settingsButton');
@@ -312,8 +311,6 @@ function updateModeSelection() {
 
 // Function to handle mode selection keyboard events
 function handleModeSelection(e) {
-  if (modeScreen.classList.contains('hidden')) return;
-
   // Handle both keyboard and gamepad input
   const input = e.type === 'keydown' ? e.which : e;
   
@@ -325,7 +322,7 @@ function handleModeSelection(e) {
       e.preventDefault(); // Prevent default behavior
       break;
     case 40: // Down arrow
-    case 14: // D-pad Down (changed from 13 to 14)
+    case 14: // D-pad Down
       selectedMode = 'hard';
       updateModeSelection();
       e.preventDefault(); // Prevent default behavior
@@ -337,6 +334,17 @@ function handleModeSelection(e) {
       break;
   }
 }
+
+// Add click handlers for mode buttons
+normalModeButton.addEventListener('click', () => {
+  selectedMode = 'normal';
+  startGame('normal');
+});
+
+hardModeButton.addEventListener('click', () => {
+  selectedMode = 'hard';
+  startGame('hard');
+});
 
 // Add keyboard event listener for mode selection
 document.addEventListener('keydown', handleModeSelection);
@@ -386,9 +394,11 @@ function handleFormSubmit(e) {
   // Update leaderboard
   updateLeaderboard();
   
-  // Hide the win screen and show mode selection screen
+  // Hide the win screen
   winScreen.classList.add('hidden');
-  modeScreen.classList.remove('hidden');
+  
+  // Show mode selection buttons
+  document.getElementById('modeSelection').classList.remove('hidden');
   
   // Reset selection to normal mode
   selectedMode = 'normal';
@@ -403,8 +413,13 @@ function startGame(mode) {
   isHardMode = mode === 'hard';
   speedMultiplier = isHardMode ? 2 : 1;
   
-  // Hide mode selection screen
-  modeScreen.classList.add('hidden');
+  // Hide mode selection buttons
+  document.getElementById('modeSelection').classList.add('hidden');
+  
+  // Show and animate START text
+  const startText = document.getElementById('startText');
+  startText.classList.remove('hidden');
+  startText.classList.remove('opacity-0');
   
   // Reset game state
   scoredFroggers.length = 0;
@@ -435,6 +450,11 @@ function startGame(mode) {
   
   // Update the leaderboard display
   updateLeaderboard();
+  
+  // Hide START text after 1 second
+  setTimeout(() => {
+    startText.classList.add('hidden');
+  }, 1000);
 }
 
 // Function to update pattern speeds based on mode
@@ -473,6 +493,9 @@ function checkWinCondition() {
     
     // Show win screen
     winScreen.classList.remove('hidden');
+    
+    // Focus on the display name input field
+    document.getElementById('displayName').focus();
     
     // Trigger a big confetti celebration
     confetti({
@@ -599,27 +622,6 @@ function handleGamepadInput() {
   const gamepad = navigator.getGamepads()[gamepadIndex];
   if (!gamepad) return;
 
-  // Handle mode selection on start screen
-  if (!modeScreen.classList.contains('hidden')) {
-    // Handle D-pad buttons for mode selection
-    if (gamepad.buttons[14].pressed) { // Left
-      handleModeSelection(37); // Simulate left arrow
-    }
-    if (gamepad.buttons[15].pressed) { // Right
-      handleModeSelection(39); // Simulate right arrow
-    }
-    if (gamepad.buttons[12].pressed) { // Up
-      handleModeSelection(12); // D-pad Up
-    }
-    if (gamepad.buttons[13].pressed) { // Down
-      handleModeSelection(14); // D-pad Down
-    }
-    if (gamepad.buttons[9].pressed) { // Start button
-      handleModeSelection(9); // Start button
-    }
-    return; // Skip regular game controls while on mode selection screen
-  }
-
   // Update button states
   buttonStates.left.previous = buttonStates.left.current;
   buttonStates.right.previous = buttonStates.right.current;
@@ -649,8 +651,8 @@ function handleGamepadInput() {
   if (gamepad.buttons[8].pressed) { // Select button
     // Hide win screen if it's showing
     winScreen.classList.add('hidden');
-    // Show mode selection screen
-    modeScreen.classList.remove('hidden');
+    // Show mode selection buttons
+    document.getElementById('modeSelection').classList.remove('hidden');
     // Reset selection to normal mode
     selectedMode = 'normal';
     updateModeSelection();
@@ -974,26 +976,20 @@ function loop() {
 
 // listen to keyboard events to move frogger
 document.addEventListener('keydown', function(e) {
-  // Handle mode selection if on mode screen
-  if (!modeScreen.classList.contains('hidden')) {
-    handleModeSelection(e);
-    return;
-  }
-
-  // Restart game with 'R' key
-  if (e.which === 82) { // 82 is the key code for 'R'
+  // Restart game with 'R' key only if win screen is hidden
+  if (e.which === 82 && winScreen.classList.contains('hidden')) { // 82 is the key code for 'R'
     // Hide win screen if it's showing
     winScreen.classList.add('hidden');
-    // Show mode selection screen
-    modeScreen.classList.remove('hidden');
+    // Show mode selection buttons
+    document.getElementById('modeSelection').classList.remove('hidden');
     // Reset selection to normal mode
     selectedMode = 'normal';
     updateModeSelection();
     return;
   }
 
-  // Only handle game controls if the win screen is hidden
-  if (!winScreen.classList.contains('hidden')) {
+  // Only handle game controls if the win screen is hidden and mode selection is hidden
+  if (!winScreen.classList.contains('hidden') || !document.getElementById('modeSelection').classList.contains('hidden')) {
     return;
   }
 

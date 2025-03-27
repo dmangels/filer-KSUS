@@ -43,23 +43,37 @@
         </a>
     </div>
     <div class="flex flex-col items-center justify-center mt-8">
-        <div class="flex flex-row items-center justify-center">
-            <img src="images/filer-text.png" alt="Filer" class="h-32 mr-4">
-            <h1 class="text-white text-4xl font-bold">Transfer five files to the cloud!</h1>
-        </div>
-        <div class="text-white text-md text-center space-y-1">
-            <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer. Press 'R' or <span class="font-bold text-green-500">SELECT</span> to start a new game</p>
-        </div>
-        <div class="flex items-center justify-center gap-2">
-            <div class="text-white text-lg">Files Transferred:</div>
-            <div class="flex gap-1">
-                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest1">0</div>
-                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest2">0</div>
-                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest3">0</div>
-                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest4">0</div>
-                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest5">0</div>
+        <div class="flex flex-row items-start justify-center gap-8">
+            <div class="flex flex-col items-center">
+                <div class="flex flex-row items-center justify-center">
+                    <img src="images/filer-text.png" alt="Filer" class="h-32 mr-4">
+                    <h1 class="text-white text-4xl font-bold">Transfer five files to the cloud!</h1>
+                </div>
+                <div class="text-white text-md text-center space-y-1">
+                    <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer. Press 'R' or <span class="font-bold text-green-500">SELECT</span> to start a new game</p>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                    <div class="text-white text-lg">Files Transferred:</div>
+                    <div class="flex gap-1">
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest1">0</div>
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest2">0</div>
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest3">0</div>
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest4">0</div>
+                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest5">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-center gap-4" id="modeSelection">
+                <p class="text-white text-sm text-center">Select your mode and press START</p>
+                <button id="normalMode" class="w-48 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">
+                    Normal Mode 😄
+                </button>
+                <button id="hardMode" class="w-48 bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors">
+                    Hard Mode 🤯
+                </button>
             </div>
         </div>
+        <div id="startText" class="hidden fixed inset-0 flex items-center justify-center text-6xl font-bold text-green-500 animate-pulse opacity-100 transition-opacity duration-1000">MOVE THE FILES!</div>
         <div class="flex flex-row items-start justify-center gap-8 mt-2">
             <!-- Leaderboard -->
             <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
@@ -153,28 +167,6 @@
         </div>
         <div id="made-with-love">
             <p class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1">Made with ❤️ and ☕️<br>by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
-        </div>
-    </div>
-    <!-- Mode Selection Screen -->
-    <div id="modeScreen" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-500 p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center border-2 border-white">
-            <div class="flex flex-row items-center justify-center gap-4">
-                <a href="https://www.files.com" target="_blank" rel="noopener noreferrer">
-                    <img src="images/files-logo.png" alt="logo" class="w-20">
-                </a>
-                <img src="images/filer-text.png" alt="Filer" class="h-44">
-            </div>
-            <h1 class="text-white text-3xl font-bold mt-4">Transfer five files to the cloud!</h1>
-            <p class="text-xl text-gray-300 mt-8">Choose your challenge level</p>
-            <p class="text-xl text-gray-300 my-4">⬆️ ⬇️ + <span class="font-bold text-green-500">START</span></p>
-            <div class="space-y-4">
-                <button id="normalMode" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Normal Mode 😄
-                </button>
-                <button id="hardMode" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Hard Mode 🤯
-                </button>
-            </div>
         </div>
     </div>
     <!-- Win Screen Overlay -->
