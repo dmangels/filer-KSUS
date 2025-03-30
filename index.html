@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:title" content="Files.com Frogger Game" />
@@ -32,8 +32,63 @@
   html, body {
     height: 100%;
     margin: 0;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #000;
+    color: #fff;
   }
 
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s infinite;
+  }
+
+  .retro-border {
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 4px #000;
+  }
+
+  .retro-text {
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 1px;
+  }
+
+  .retro-button {
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 4px #000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8em;
+  }
+
+  .retro-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #000;
+  }
+
+  .retro-panel {
+    background-color: #000;
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 4px #000;
+  }
+
+  .retro-input {
+    background-color: #000;
+    border: 2px solid #fff;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8em;
+  }
+
+  .retro-input:focus {
+    outline: none;
+    border-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+  }
   </style>
 </head>
 <body class="bg-black">
@@ -43,164 +98,165 @@
         </a>
     </div>
     <div class="flex flex-col items-center justify-center mt-8">
-        <div class="flex flex-row items-start justify-center gap-8">
-            <div class="flex flex-col items-center">
-                <div class="flex flex-row items-center justify-center">
-                    <img src="images/filer-text.png" alt="Filer" class="h-32 mr-4">
-                    <h1 class="text-white text-4xl font-bold">Transfer five files to the cloud!</h1>
-                </div>
-                <div class="text-white text-md text-center space-y-1">
-                    <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer. Press 'R' or <span class="font-bold text-green-500">SELECT</span> to start a new game</p>
-                </div>
-                <div class="flex items-center justify-center gap-2">
-                    <div class="text-white text-lg">Files Transferred:</div>
-                    <div class="flex gap-1">
-                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest1">0</div>
-                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest2">0</div>
-                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest3">0</div>
-                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest4">0</div>
-                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white" id="dest5">0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col items-center justify-center gap-4" id="modeSelection">
-                <p class="text-white text-sm text-center">Select your mode and press START</p>
-                <button id="normalMode" class="w-48 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Normal Mode 😄
-                </button>
-                <button id="hardMode" class="w-48 bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors">
-                    Hard Mode 🤯
-                </button>
+        <div class="flex flex-row items-center justify-center">
+            <img src="images/filer-text.png" alt="Filer" class="h-32 mr-4">
+            <h1 class="text-white text-2xl font-bold retro-text">Transfer five files to the cloud!</h1>
+        </div>
+        <div class="text-white text-xs text-center space-y-1">
+            <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer. Press 'R' or <span class="text-green-500 font-bold">SELECT</span> to start a new game</p>
+        </div>
+        <div class="flex items-center justify-center gap-2 mt-4">
+            <div class="text-white text-sm">Files Transferred:</div>
+            <div class="flex gap-1">
+                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest1">0</div>
+                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest2">0</div>
+                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest3">0</div>
+                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest4">0</div>
+                <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest5">0</div>
             </div>
         </div>
-        <div id="startText" class="hidden fixed inset-0 flex items-center justify-center text-6xl font-bold text-green-500 animate-pulse opacity-100 transition-opacity duration-1000">MOVE THE FILES!</div>
-        <div class="flex flex-row items-start justify-center gap-8 mt-2">
-            <!-- Leaderboard -->
-            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
-                <h2 class="text-green-400 text-xl font-bold mb-4">🏆 Filer Leaderboard</h2>
-                <div id="leaderboard" class="space-y-2">
-                    <!-- Leaderboard entries will be populated here -->
+    </div>
+    <div id="startText" class="hidden fixed inset-0 flex items-center justify-center text-4xl font-bold text-green-500 animate-pulse opacity-100 transition-opacity duration-1000 retro-text">MOVE THE FILES!</div>
+    <div class="flex flex-row items-start justify-center gap-8 mt-2">
+        <!-- Leaderboard -->
+        <div class="retro-panel p-6 w-80">
+            <h2 class="text-green-400 text-lg font-bold mb-4 retro-text">🏆 Filer Leaderboard</h2>
+            <div id="leaderboard" class="space-y-2">
+                <!-- Leaderboard entries will be populated here -->
+            </div>
+        </div>
+        
+        <canvas width="624" height="720" id="game" class="retro-border"></canvas>
+        
+        <!-- Game Legend -->
+        <div class="retro-panel p-6 w-96">
+            <h2 class="text-green-400 text-lg font-bold mb-4 retro-text">🗺️ Game Legend</h2>
+            
+            <!-- Safe Elements -->
+            <div class="mb-6">
+                <h3 class="text-green-500 font-bold mb-2 retro-text">✅ Safe to Ride</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <img src="images/cloud.png" alt="Cloud Service" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Cloud Services - Your destinations</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/fiber-cable.png" alt="Fiber Cable" class="w-12 h-4">
+                        <span class="text-gray-300 text-xs">Fiber Cable - Regional data center connectivity</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/multi-thread.png" alt="Multi Thread" class="w-12 h-4">
+                        <span class="text-gray-300 text-xs">Multi Thread - Parallel processing speed boost</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/wifi.png" alt="WiFi" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Secure Network - Encrypted in transit and at rest</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/automation.png" alt="Automation" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Automated Transfers - Schedule your transfers</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/server.png" alt="Server" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Server - Your starting point</span>
+                    </div>
                 </div>
             </div>
             
-        <canvas width="624" height="720" id="game"></canvas>
-            
-            <!-- Game Legend -->
-            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
-                <h2 class="text-green-400 text-xl font-bold mb-4">🗺️ Game Legend</h2>
-                
-                <!-- Safe Elements -->
-                <div class="mb-6">
-                    <h3 class="text-green-500 font-bold mb-2">✅ Safe to Ride</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3">
-                            <img src="images/cloud.png" alt="Cloud Service" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Cloud Services - Your destinations</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <img src="images/fiber-cable.png" alt="Fiber Cable" class="w-12 h-4">
-                            <span class="text-gray-300 text-sm">Fiber Cable - Regional data center connectivity for low latency transfers</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <img src="images/multi-thread.png" alt="Multi Thread" class="w-12 h-4">
-                            <span class="text-gray-300 text-sm">Multi Thread - Parallel processing to speed up your transfer</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <img src="images/wifi.png" alt="WiFi" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Secure Network - Encrypted in transit and at rest</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <img src="images/automation.png" alt="Automation" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Automated Transfers - Schedule and automate your transfers</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <img src="images/server.png" alt="Server" class="w-8 h-8">
-                            <span class="text-gray-300 text-sm">Server - Your starting point</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Dangerous Elements -->
-                <div>
-                    <h3 class="text-red-500 font-bold mb-2">🛑 Avoid These</h3>
-                    <div class="space-y-3">
-                      <div class="flex items-center gap-3">
+            <!-- Dangerous Elements -->
+            <div>
+                <h3 class="text-red-500 font-bold mb-2 retro-text">🛑 Avoid These</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
                         <img src="images/bad-packet.png" alt="Bad Packet" class="w-8 h-8">
-                        <span class="text-gray-300 text-sm">Bad Packet - Corrupts data</span>
-                      </div>
-                      <div class="flex items-center gap-3">
-                          <img src="images/network-issue.png" alt="Network Issue" class="w-8 h-8">
-                          <span class="text-gray-300 text-sm">Network Issue - Causes timeout</span>
-                      </div>
-                      <div class="flex items-center gap-3">
-                          <img src="images/hacker.png" alt="Hacker" class="w-8 h-8">
-                          <span class="text-gray-300 text-sm">Hacker - Will steal your data</span>
-                      </div>
-                      <div class="flex items-center gap-3">
-                          <img src="images/storage-capacity.png" alt="Storage Capacity" class="w-8 h-8">
-                          <span class="text-gray-300 text-sm">Storage Capacity - Out of space</span>
-                      </div>
-                      <div class="flex items-center gap-3">
-                          <img src="images/bad-wifi.png" alt="Bad WiFi" class="w-8 h-8">
-                          <span class="text-gray-300 text-sm">Bad WiFi - Drops connection</span>
-                      </div>
+                        <span class="text-gray-300 text-xs">Bad Packet - Corrupts data</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/network-issue.png" alt="Network Issue" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Network Issue - Causes timeout</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/hacker.png" alt="Hacker" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Hacker - Will steal your data</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/storage-capacity.png" alt="Storage Capacity" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Storage Capacity - Out of space</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <img src="images/bad-wifi.png" alt="Bad WiFi" class="w-8 h-8">
+                        <span class="text-gray-300 text-xs">Bad WiFi - Drops connection</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="fixed top-0 right-0 p-2 flex items-start gap-2">
-        <div class="relative group">
-            <button id="settingsButton" class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1 hover:bg-opacity-75 transition-colors">
+        <div class="relative">
+            <button id="settingsButton" class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1 hover:bg-opacity-75 transition-colors retro-button">
                 ⚙️
             </button>
-            <div class="absolute right-0 mt-1 w-48 bg-gray-800 rounded-md shadow-lg hidden group-hover:block">
+            <div id="settingsDropdown" class="absolute right-0 mt-1 w-48 bg-black rounded-md shadow-lg hidden retro-panel">
                 <div class="py-1">
-                    <button id="downloadCsv" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <button id="downloadCsv" class="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white retro-text">
                         📥 Download All Scores
                     </button>
-                    <button id="clearLeaderboard" class="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <button id="clearLeaderboard" class="block w-full text-left px-4 py-2 text-xs text-gray-300 hover:bg-gray-700 hover:text-white retro-text">
                         🗑️ Clear Leaderboard
                     </button>
                 </div>
             </div>
         </div>
         <div id="made-with-love">
-            <p class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1">Made with ❤️ and ☕️<br>by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
+            <p class="text-white text-xs bg-gray-500 bg-opacity-50 rounded px-2 py-1 retro-text">Made with ❤️ and ☕️<br>by <a href="https://github.com/thsnyder" class="text-blue-500">Tom Snyder</a> at <a href="https://www.files.com" class="text-blue-500">Files.com</a></p>
         </div>
     </div>
     <!-- Win Screen Overlay -->
     <div id="winScreen" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
-        <div class="bg-gray-900 p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">Congratulations! 🎉</h2>
-            <p class="text-xl text-white mb-6">Your files are now safely stored across multiple cloud providers!<p>
+        <div class="bg-black p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center retro-panel">
+            <h2 class="text-3xl font-bold text-white mb-4 retro-text">Congratulations! 🎉</h2>
+            <p class="text-lg text-white mb-6 retro-text">Your files are now safely stored across multiple cloud providers!<p>
             <div class="space-y-4">
                 <div class="score-details text-gray-300 space-y-2">
                     <!-- Score details will be populated here -->
                 </div>
-                <p class="text-xl text-white">Shouldn't transferring files be easier than this?</p>
-                <p class="text-gray-300">Talk to one of our Customer Success Reps to learn more about Files.com!</p>
+                <p class="text-lg text-white retro-text">Shouldn't transferring files be easier than this?</p>
+                <p class="text-gray-300 text-sm">Talk to one of our Customer Success Reps to learn more about Files.com!</p>
                 
                 <!-- High Score Form -->
                 <form id="highScoreForm" class="space-y-4 text-left">
                     <div>
-                        <label for="displayName" class="block text-sm font-medium text-gray-300">Display Name</label>
-                        <input type="text" id="displayName" name="displayName" required class="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <label for="displayName" class="block text-xs font-medium text-gray-300">Display Name</label>
+                        <input type="text" id="displayName" name="displayName" required class="mt-1 block w-full retro-input">
                     </div>
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
-                        <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <label for="email" class="block text-xs font-medium text-gray-300">Email Address</label>
+                        <input type="email" id="email" name="email" required class="mt-1 block w-full retro-input">
                     </div>
                     <div>
-                        <label for="company" class="block text-sm font-medium text-gray-300">Company</label>
-                        <input type="text" id="company" name="company" required class="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <label for="company" class="block text-xs font-medium text-gray-300">Company</label>
+                        <input type="text" id="company" name="company" required class="mt-1 block w-full retro-input">
                     </div>
                     <div class="flex justify-center">
-                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors retro-button">
                             Submit Score
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <!-- Mode Selection Modal -->
+    <div id="modeSelection" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-black p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center transform -translate-y-[60%] retro-panel">
+            <p class="text-white text-sm text-center mb-6 retro-text">⬆️ ⬇️ Select your mode and press START</p>
+            <div class="space-y-4">
+                <button id="normalMode" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded transition-colors animate-pulse-slow retro-button">
+                    Normal Mode 😄
+                </button>
+                <button id="hardMode" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors animate-pulse-slow retro-button">
+                    Hard Mode 🤯
+                </button>
             </div>
         </div>
     </div>

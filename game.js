@@ -416,6 +416,10 @@ function startGame(mode) {
   // Hide mode selection buttons
   document.getElementById('modeSelection').classList.add('hidden');
   
+  // Remove pulse animation from buttons
+  normalModeButton.classList.remove('animate-pulse-slow');
+  hardModeButton.classList.remove('animate-pulse-slow');
+  
   // Show and animate START text
   const startText = document.getElementById('startText');
   startText.classList.remove('hidden');
@@ -597,6 +601,21 @@ function clearLeaderboard() {
 // Add event listeners for settings buttons
 downloadCsvButton.addEventListener('click', downloadScoresAsCsv);
 clearLeaderboardButton.addEventListener('click', clearLeaderboard);
+
+// Add settings dropdown toggle functionality
+const settingsDropdown = document.getElementById('settingsDropdown');
+
+settingsButton.addEventListener('click', (e) => {
+  e.stopPropagation();
+  settingsDropdown.classList.toggle('hidden');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!settingsButton.contains(e.target) && !settingsDropdown.contains(e.target)) {
+    settingsDropdown.classList.add('hidden');
+  }
+});
 
 // Function to handle gamepad connection/disconnection
 function handleGamepadConnection(e) {
