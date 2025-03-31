@@ -236,6 +236,7 @@ for (let i = 0; i < patterns.length; i++) {
       x,
       y: grid * (i + 1),
       index,
+      patternIndex: i,  // Store the pattern index with each sprite
       ...pattern
     }));
 
@@ -265,6 +266,9 @@ let isHardMode = false;
 let speedMultiplier = 1;
 let selectedMode = 'normal'; // Track which mode is currently selected
 let finalScore = 0; // Store the final score when game is won
+
+// Store original speeds for resetting
+const originalSpeeds = patterns.map(pattern => pattern ? pattern.speed : null);
 
 // Add gamepad support variables at the top with other constants
 let gamepadConnected = false;
@@ -408,6 +412,33 @@ function handleFormSubmit(e) {
 // Add form submit handler
 highScoreForm.addEventListener('submit', handleFormSubmit);
 
+// Function to update pattern speeds based on mode
+function updatePatternSpeeds() {
+  // First reset all speeds to original values
+  for (let i = 0; i < patterns.length; i++) {
+    if (patterns[i]) {
+      patterns[i].speed = originalSpeeds[i];
+    }
+  }
+  
+  // Then apply the speed multiplier
+  for (let i = 0; i < patterns.length; i++) {
+    if (patterns[i]) {
+      patterns[i].speed = patterns[i].speed * speedMultiplier;
+    }
+  }
+  
+  // Update all existing sprites with new speeds
+  for (let r = 0; r < rows.length; r++) {
+    if (rows[r]) {
+      for (let sprite of rows[r]) {
+        // Use the stored pattern index to get the correct speed
+        sprite.speed = patterns[sprite.patternIndex].speed;
+      }
+    }
+  }
+}
+
 // Function to start the game with selected mode
 function startGame(mode) {
   isHardMode = mode === 'hard';
@@ -459,24 +490,6 @@ function startGame(mode) {
   setTimeout(() => {
     startText.classList.add('hidden');
   }, 1000);
-}
-
-// Function to update pattern speeds based on mode
-function updatePatternSpeeds() {
-  for (let i = 0; i < patterns.length; i++) {
-    if (patterns[i]) {
-      patterns[i].speed = patterns[i].speed * speedMultiplier;
-    }
-  }
-  
-  // Update all existing sprites with new speeds
-  for (let r = 0; r < rows.length; r++) {
-    if (rows[r]) {
-      for (let sprite of rows[r]) {
-        sprite.speed = sprite.speed * speedMultiplier;
-      }
-    }
-  }
 }
 
 // Function to check if the game has been won
@@ -651,6 +664,26 @@ function handleGamepadInput() {
   buttonStates.right.current = gamepad.buttons[15].pressed;
   buttonStates.up.current = gamepad.buttons[12].pressed;
   buttonStates.down.current = gamepad.buttons[13].pressed;
+
+  // Check if mode selection modal is visible
+  const modeSelection = document.getElementById('modeSelection');
+  if (!modeSelection.classList.contains('hidden')) {
+    // Handle D-pad buttons for mode selection
+    if (buttonStates.up.current && !buttonStates.up.previous) {
+      selectedMode = 'normal';
+      updateModeSelection();
+    }
+    if (buttonStates.down.current && !buttonStates.down.previous) {
+      selectedMode = 'hard';
+      updateModeSelection();
+    }
+
+    // Handle Start button to start game
+    if (gamepad.buttons[9].pressed) { // Start button
+      startGame(selectedMode);
+    }
+    return; // Skip game controls while in mode selection
+  }
 
   // Handle D-pad buttons for game controls with improved debouncing
   if (buttonStates.left.current && !buttonStates.left.previous) { // Left
