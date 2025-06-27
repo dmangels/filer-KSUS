@@ -106,7 +106,7 @@
             <p>⬆️ ⬇️ ⬅️ ➡️ Use arrow keys to move the filer. Press 'R' or <span class="text-green-500 font-bold">SELECT</span> to start a new game</p>
         </div>
         <div class="flex items-center justify-center gap-2 mt-4">
-            <div class="text-white text-sm">Files Transferred:</div>
+            <div class="text-white text-sm">Locations Visited:</div>
             <div class="flex gap-1">
                 <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest1">0</div>
                 <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-white retro-border" id="dest2">0</div>
@@ -116,7 +116,7 @@
             </div>
         </div>
     </div>
-    <div id="startText" class="hidden fixed inset-0 flex items-center justify-center text-4xl font-bold text-green-500 animate-pulse opacity-100 transition-opacity duration-1000 retro-text">MOVE THE FILES!</div>
+    <div id="startText" class="hidden fixed inset-0 flex items-center justify-center text-4xl font-bold text-green-500 animate-pulse opacity-100 transition-opacity duration-1000 retro-text">DELIVER THE K!</div>
     <div class="flex flex-row items-start justify-center gap-8 mt-2">
         <!-- Leaderboard -->
         <div class="retro-panel p-6 w-80">
@@ -215,13 +215,13 @@
     <div id="winScreen" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-50">
         <div class="bg-black p-8 rounded-lg shadow-xl max-w-md w-full mx-4 text-center retro-panel">
             <h2 class="text-3xl font-bold text-white mb-4 retro-text">Congratulations! 🎉</h2>
-            <p class="text-lg text-white mb-6 retro-text">Your files are now safely stored across multiple cloud providers!<p>
+            <p class="text-lg text-white mb-6 retro-text">You delivered the K sculpture to each part of campus!<p>
             <div class="space-y-4">
                 <div class="score-details text-gray-300 space-y-2">
                     <!-- Score details will be populated here -->
                 </div>
-                <p class="text-lg text-white retro-text">Shouldn't transferring files be easier than this?</p>
-                <p class="text-gray-300 text-sm">Talk to one of our Customer Success Reps to learn more about Files.com!</p>
+                <p class="text-lg text-white retro-text">Want an easier way to experience campus?</p>
+                <p class="text-gray-300 text-sm">Learn more about the courses and experiences offered at salina.K-State.edu!</p>
                 
                 <!-- High Score Form -->
                 <form id="highScoreForm" class="space-y-4 text-left">
@@ -232,10 +232,6 @@
                     <div>
                         <label for="email" class="block text-xs font-medium text-gray-300">Email Address</label>
                         <input type="email" id="email" name="email" required class="mt-1 block w-full retro-input">
-                    </div>
-                    <div>
-                        <label for="company" class="block text-xs font-medium text-gray-300">Company</label>
-                        <input type="text" id="company" name="company" required class="mt-1 block w-full retro-input">
                     </div>
                     <div class="flex justify-center">
                         <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors retro-button">

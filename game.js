@@ -4,51 +4,51 @@ const context = canvas.getContext('2d');
 const grid = 48;
 const gridGap = 10;
 
-// Load the images
+// Load the images - Player characters
 const filerImage = new Image();
-filerImage.src = 'images/filer.png';
+filerImage.src = 'images/k.png';
 const filerCsvImage = new Image();
-filerCsvImage.src = 'images/filer-csv.png';
+filerCsvImage.src = 'images/k.png';
 const filerJsonImage = new Image();
-filerJsonImage.src = 'images/filer-json.png';
+filerJsonImage.src = 'images/k.png';
 const filerPdfImage = new Image();
-filerPdfImage.src = 'images/filer-pdf.png';
+filerPdfImage.src = 'images/k.png';
 const filerXmlImage = new Image();
-filerXmlImage.src = 'images/filer-xml.png';
+filerXmlImage.src = 'images/k.png';
 
 // Array of filer images to use in sequence
 const filerImages = [filerImage, filerCsvImage, filerJsonImage, filerPdfImage, filerXmlImage];
 
 const serverImage = new Image();
-serverImage.src = 'images/server.png';
+serverImage.src = 'images/Powercat.png';
 const wifiImage = new Image();
-wifiImage.src = 'images/wifi.png';
+wifiImage.src = 'images/Wifi.png';
 const hackerImage = new Image();
-hackerImage.src = 'images/hacker.png';
+hackerImage.src = 'images/walker.png';
 const networkIssueImage = new Image();
-networkIssueImage.src = 'images/network-issue.png';
+networkIssueImage.src = 'images/plane.png';
 const badWifiImage = new Image();
-badWifiImage.src = 'images/bad-wifi.png';
+badWifiImage.src = 'images/drone.png';
 const badPacketImage = new Image();
-badPacketImage.src = 'images/bad-packet.png';
+badPacketImage.src = 'images/GolfCart.png';
 const boxImage = new Image();
-boxImage.src = 'images/box.png';
+boxImage.src = 'images/hanger.png';
 const awsImage = new Image();
-awsImage.src = 'images/aws.png';
+awsImage.src = 'images/SLC.png';
 const azureImage = new Image();
-azureImage.src = 'images/azure.png';
+azureImage.src = 'images/Computer.png';
 const dropboxImage = new Image();
-dropboxImage.src = 'images/dropbox.png';
+dropboxImage.src = 'images/MET.png';
 const googleCloudImage = new Image();
-googleCloudImage.src = 'images/google-cloud.png';
+googleCloudImage.src = 'images/DiscGolf.png';
 const fiberCableImage = new Image();
-fiberCableImage.src = 'images/fiber-cable.png';
+fiberCableImage.src = 'images/KSUcable.png';
 const multiThreadImage = new Image();
-multiThreadImage.src = 'images/multi-thread.png';
+multiThreadImage.src = 'images/Tablets.png';
 const automationImage = new Image();
-automationImage.src = 'images/automation.png';
+automationImage.src = 'images/Disc.png';
 const storageCapacityImage = new Image();
-storageCapacityImage.src = 'images/storage-capacity.png';
+storageCapacityImage.src = 'images/RoboCarWhite.png';
 
 // a simple sprite prototype function
 function Sprite(props) {
@@ -101,12 +101,12 @@ const patterns = [
     color: '#FFFFFF',  // color of the obstacle
     size: grid * 4,    // width of the obstacle
     shape: 'rect',     // shape of the obstacle (rect or circle)
-    speed: 0.75,       // how fast the obstacle moves and which direction
+    speed: 0.75,       // how fast the obstacle moves and which direction 0.75
     image: multiThreadImage,
     imageHeight: grid  // height of the image
   },
 
-  // turtle (now wifi)
+  // turtle (now wifi) (Now Drone)
   {
     spacing: [0,0,1],
     color: '#C11F32',
@@ -197,7 +197,7 @@ const patterns = [
     color: '#FFFFFF',
     size: grid,
     shape: 'rect',
-    speed: -0.5,
+    speed: -0.5, //-0.5
     image: badWifiImage
   },
 
@@ -520,12 +520,12 @@ function checkWinCondition() {
       spread: 360,
       origin: { x: 0.5, y: 0.5 },
       colors: [
-        '#FF0000',
-        '#0000FF',
-        '#FFFF00',
-        '#00FF00',
-        '#FFA500',
-        '#800080'
+        '#512888',
+        '#c3a7e2',
+        '#512888',
+        '#c3a7e2',
+        '#FFFFFF',
+        '#c3a7e2'
       ],
       startVelocity: 30,
       gravity: 0.5,
@@ -729,11 +729,12 @@ function loop() {
   context.fillStyle = '#374151';  // A nice dark gray color
   context.fillRect(0, grid * 8, canvas.width, grid * 5);
 
+
   // end bank
   context.fillStyle = '#059669';  // Matching green from our theme
   context.fillRect(0, grid, canvas.width, 5);
   context.fillRect(0, grid, 5, grid);
-  context.fillRect(canvas.width - 5, grid, 5, grid);
+  context.fillRect(canvas.width - 5, grid, 5, grid); 
 
   // Draw cloud provider destinations with branded zones
   const cloudImages = [awsImage, azureImage, dropboxImage, googleCloudImage, boxImage];
@@ -746,7 +747,7 @@ function loop() {
   ];
 
   // Draw end zone background first (green)
-  context.fillStyle = '#059669';  // Matching green from our theme
+  context.fillStyle = '#512888';  // Matching green from our theme
   context.fillRect(0, grid, canvas.width, grid);
 
   // Draw Box logo in the leftmost green space
@@ -813,13 +814,13 @@ function loop() {
 
   // Safe zone (formerly beach) - Create a secure network pattern
   const safeZoneGradient = context.createLinearGradient(0, 7 * grid, canvas.width, 7 * grid + grid);
-  safeZoneGradient.addColorStop(0, '#1E40AF');  // Darker blue
-  safeZoneGradient.addColorStop(1, '#3B82F6');  // Lighter blue
+  safeZoneGradient.addColorStop(0, '#c3a7e2');  // Light Purple
+  safeZoneGradient.addColorStop(1, '#c3a7e2');  // Light Purple
   context.fillStyle = safeZoneGradient;
   context.fillRect(0, 7 * grid, canvas.width, grid);
   
   // Add network pattern to safe zone
-  context.strokeStyle = '#60A5FA';
+  context.strokeStyle = '#c3a7e2';
   context.lineWidth = 1;
   for (let i = 0; i < canvas.width; i += 20) {
     context.beginPath();
@@ -830,20 +831,20 @@ function loop() {
 
   // Add text to safe zone
   context.font = 'bold 20px sans-serif';
-  context.fillStyle = '#93C5FD';  // Light blue color
+  context.fillStyle = '#512888';  // 
   context.textAlign = 'center';
-  context.fillText('RIDE FILES.COM FEATURES TO YOUR DESTINATION', canvas.width / 2, 7 * grid + grid/2 + 8);
+  context.fillText('K-STATE SALINA', canvas.width / 2, 7 * grid + grid/2 + 8);
 
   // Start zone - Create a secure starting area pattern
   const startZoneGradient = context.createLinearGradient(0, canvas.height - grid * 2, canvas.width, canvas.height - grid);
-  startZoneGradient.addColorStop(0, '#059669');  // Darker green
-  startZoneGradient.addColorStop(1, '#10B981');  // Lighter green
+  startZoneGradient.addColorStop(0, '#512888');  // Ksu purple
+  startZoneGradient.addColorStop(1, '#512888');  // KSU Purple - can change for gradient
   context.fillStyle = startZoneGradient;
   context.fillRect(0, canvas.height - grid * 2, canvas.width, grid);
 
   // Add text to start zone
   context.font = 'bold 20px sans-serif';
-  context.fillStyle = '#34D399';
+  context.fillStyle = '#c3a7e29';
   context.textAlign = 'center';
   context.fillText('YOUR ON-PREMISE NETWORK', canvas.width / 2, canvas.height - grid - 10);
 
@@ -976,12 +977,12 @@ function loop() {
         spread: 360,
         origin: { x: 0.5, y: 0.5 },
         colors: [
-          '#FF0000',
-          '#0000FF',
-          '#FFFF00',
-          '#00FF00',
-          '#FFA500',
-          '#800080'
+          '#512888',
+            '#c3a7e2',
+            '#512888',
+            '#c3a7e2',
+            '#FFFFFF',
+            '#c3a7e2'
         ],
         startVelocity: 25,
         gravity: 0.5,
